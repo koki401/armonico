@@ -1,0 +1,11 @@
+{
+  "/api": {
+    "target": "https://armonico.fly.dev",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/api": ""
+    }
+  }
+}

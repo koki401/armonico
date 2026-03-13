@@ -1,0 +1,96 @@
+<h2 mat-dialog-title>Ingredientes</h2>
+
+<mat-dialog-content class="dialog-content">
+    <form [formGroup]="ingForm" class="form-grid-2cols">
+        <!-- Columna 1 -->
+        <mat-form-field appearance="fill" class="span-2">
+            <mat-label>Ingrediente</mat-label>
+            <mat-select formControlName="idProducto">
+                <mat-option *ngFor="let p of productos" [value]="p.idProducto">
+                    {{ p.nombre }}
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="ingForm.get('idProducto')?.hasError('required')">
+                Seleccione un ingrediente
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Cantidad Mostrada</mat-label>
+            <input matInput type="number" formControlName="cantidadMostrada" step="0.01" />
+            <mat-error *ngIf="ingForm.get('cantidadMostrada')?.hasError('required')">
+                Campo requerido
+            </mat-error>
+            <mat-error *ngIf="ingForm.get('cantidadMostrada')?.hasError('min')">
+                Mínimo 0.01
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Columna 2 -->
+        <mat-form-field appearance="fill">
+            <mat-label>Unidad Mostrada</mat-label>
+            <mat-select formControlName="unidadMostrada">
+                <mat-optgroup *ngFor="let categoria of unidadCategorias" [label]="categoria.label">
+                    <mat-option *ngFor="let unidad of categoria.items" [value]="unidad">
+                        {{ unidad }}
+                    </mat-option>
+                </mat-optgroup>
+            </mat-select>
+            <mat-error *ngIf="ingForm.get('unidadMostrada')?.hasError('required')">
+                Seleccione una unidad
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Cantidad Consumida</mat-label>
+            <input matInput type="number" formControlName="cantidadConsumida" step="0.01" />
+            <mat-hint>Cantidad que se descuenta del inventario</mat-hint>
+            <mat-error *ngIf="ingForm.get('cantidadConsumida')?.hasError('required')">
+                Campo requerido
+            </mat-error>
+            <mat-error *ngIf="ingForm.get('cantidadConsumida')?.hasError('min')">
+                Mínimo 0.01
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Unidad Base - span completo -->
+        <!-- Unidad Base -->
+        <mat-form-field appearance="fill" class="span-2">
+            <mat-label>Unidad Base</mat-label>
+            <input matInput formControlName="unidad" readonly /> <!-- ✅ Cambiar de unidadBase a unidad -->
+            <mat-hint>Unidad del producto en inventario</mat-hint>
+        </mat-form-field>
+
+        <!-- Botón agregar - span completo -->
+        <div class="span-2">
+            <button mat-raised-button color="primary" [disabled]="ingForm.invalid" (click)="agregar()">
+                Agregar ingrediente
+            </button>
+        </div>
+    </form>
+
+    <h3 class="mt-4">
+        Ingredientes agregados
+        <span class="chip">{{ count }}</span>
+    </h3>
+
+    <div class="listado">
+        <div class="item" *ngFor="let i of ingredientes">
+            <div class="info">
+                <div class="nombre">{{ i.nombreProducto }}</div>
+                <div class="detalle">
+                    <strong>Mostrada:</strong> {{ i.cantidadMostrada }} {{ i.unidadMostrada }}
+                    <br>
+                    <strong>Consumida:</strong> {{ i.cantidadConsumida }} {{ i.unidad }}
+                </div>
+            </div>
+            <button mat-button color="warn" (click)="quitar(i)">Quitar</button>
+        </div>
+        <div *ngIf="!ingredientes.length" class="empty">No hay ingredientes agregados.</div>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="cancelar()">Cancelar</button>
+    <button mat-raised-button color="primary" (click)="guardar()">Guardar</button>
+</mat-dialog-actions>

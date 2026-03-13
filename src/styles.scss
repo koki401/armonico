@@ -1,0 +1,261 @@
+// styles.scss
+
+// Importar Angular Material
+@use '@angular/material' as mat;
+
+// Incluir estilos base de Material
+@include mat.core();
+
+// Definir paletas personalizadas
+$custom-primary: mat.m2-define-palette(mat.$m2-red-palette, 700);
+$custom-accent: mat.m2-define-palette(mat.$m2-cyan-palette, 500);
+$custom-warn: mat.m2-define-palette(mat.$m2-red-palette);
+
+// Crear tema DARK personalizado
+$custom-dark-theme: mat.m2-define-dark-theme((
+  color: (
+    primary: $custom-primary,
+    accent: $custom-accent,
+    warn: $custom-warn,
+  ),
+  typography: mat.m2-define-typography-config(),
+  density: 0,
+));
+
+// Aplicar el tema dark
+@include mat.all-component-themes($custom-dark-theme);
+
+// Estilos globales
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: 'Roboto', 'Helvetica Neue', sans-serif;
+  background-color: #1c1c1c;
+  color: #ffffff;
+  color-scheme: dark; // Forzar esquema dark
+}
+
+app-root {
+  display: block;
+  height: 100%;
+}
+
+// ========================================
+// ESTILOS PERSONALIZADOS PARA EL DIÁLOGO DE LOGOUT
+// ========================================
+
+.logout-dialog {
+  // Container principal del diálogo
+  .mat-mdc-dialog-container {
+    --mdc-dialog-container-color: #1a1a1a !important;
+    --mdc-dialog-container-shape: 12px !important;
+    background-color: #1a1a1a !important;
+    color: #ffffff !important;
+    border: 1px solid #2a2a2a !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  // Surface del diálogo
+  .mdc-dialog__surface {
+    background-color: #1a1a1a !important;
+    border-radius: 12px !important;
+  }
+
+  // Título del diálogo
+  .mat-mdc-dialog-title,
+  h2[mat-dialog-title] {
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    font-size: 20px !important;
+    margin: 0 !important;
+    padding: 20px 24px 16px 24px !important;
+  }
+
+  // Contenido del diálogo
+  .mat-mdc-dialog-content {
+    color: #cccccc !important;
+    padding: 0 24px 20px 24px !important;
+    
+    p {
+      margin: 0 0 8px 0 !important;
+      line-height: 1.5 !important;
+      
+      &:first-child {
+        color: #ffffff !important;
+        font-size: 15px !important;
+      }
+      
+      &.subtitle {
+        color: #888888 !important;
+        font-size: 13px !important;
+      }
+    }
+  }
+
+  // Acciones (botones)
+  .mat-mdc-dialog-actions {
+    padding: 12px 24px 20px 24px !important;
+    gap: 8px !important;
+    justify-content: flex-end !important;
+  }
+
+  // Botón CANCELAR (mat-button)
+  .mat-mdc-button {
+    --mdc-text-button-label-text-color: #888888 !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    padding: 8px 16px !important;
+    transition: all 0.2s ease !important;
+    
+    &:hover {
+      --mdc-text-button-label-text-color: #ffffff !important;
+      background-color: rgba(255, 255, 255, 0.05) !important;
+    }
+  }
+
+  // Botón CERRAR SESIÓN (mat-raised-button warn)
+  .mat-mdc-raised-button.mat-warn {
+    --mdc-protected-button-container-color: #c94545 !important;
+    --mdc-protected-button-label-text-color: #ffffff !important;
+    --mdc-protected-button-container-shape: 8px !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    padding: 8px 20px !important;
+    box-shadow: 0 2px 8px rgba(201, 69, 69, 0.3) !important;
+    transition: all 0.2s ease !important;
+    
+    &:hover {
+      --mdc-protected-button-container-color: #d65555 !important;
+      box-shadow: 0 4px 12px rgba(201, 69, 69, 0.4) !important;
+      transform: translateY(-1px);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+// ========================================
+// OVERLAY BACKDROP (Fondo oscuro detrás del diálogo)
+// ========================================
+
+.cdk-overlay-dark-backdrop {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+}
+
+// ========================================
+// ESTILOS ADICIONALES PARA OTROS COMPONENTES DE MATERIAL
+// ========================================
+
+// Inputs y formularios
+.mat-mdc-form-field {
+  --mdc-filled-text-field-container-color: #2a2a2a !important;
+  --mdc-filled-text-field-label-text-color: #888888 !important;
+  --mdc-filled-text-field-input-text-color: #ffffff !important;
+}
+
+// Snackbars (notificaciones)
+.mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-color: #2a2a2a !important;
+  --mdc-snackbar-supporting-text-color: #ffffff !important;
+}
+
+// Tooltips
+.mat-mdc-tooltip {
+  --mdc-plain-tooltip-container-color: #2a2a2a !important;
+  --mdc-plain-tooltip-supporting-text-color: #ffffff !important;
+}
+
+// Menús
+.mat-mdc-menu-panel {
+  background-color: #1a1a1a !important;
+  border: 1px solid #2a2a2a !important;
+  
+  .mat-mdc-menu-item {
+    color: #ffffff !important;
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.05) !important;
+    }
+  }
+}
+
+// ========================================
+// SCROLLBAR PERSONALIZADO (OPCIONAL)
+// ========================================
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a2a2a;
+  border-radius: 4px;
+  
+  &:hover {
+    background: #3a3a3a;
+  }
+}
+
+// Firefox scrollbar
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2a2a2a #1a1a1a;
+}
+
+/* ====== SNACKBARS PERSONALIZADOS (Angular Material MDC) ====== */
+
+/* Éxito */
+.mat-mdc-snack-bar-container.snack-success .mdc-snackbar__surface {
+  background: #2e7d32;   /* verde */
+  color: #fff;
+}
+.mat-mdc-snack-bar-container.snack-success .mdc-snackbar__label,
+.mat-mdc-snack-bar-container.snack-success .mdc-button__label {
+  color: #fff;
+}
+
+/* Error */
+.mat-mdc-snack-bar-container.snack-error .mdc-snackbar__surface {
+  background: #c62828;   /* rojo */
+  color: #fff;
+}
+.mat-mdc-snack-bar-container.snack-error .mdc-snackbar__label,
+.mat-mdc-snack-bar-container.snack-error .mdc-button__label {
+  color: #fff;
+}
+
+/* Info */
+.mat-mdc-snack-bar-container.snack-info .mdc-snackbar__surface {
+  background: #1565c0;   /* azul */
+  color: #fff;
+}
+.mat-mdc-snack-bar-container.snack-info .mdc-snackbar__label,
+.mat-mdc-snack-bar-container.snack-info .mdc-button__label {
+  color: #fff;
+}
+
+/* Advertencia */
+.mat-mdc-snack-bar-container.snack-warn .mdc-snackbar__surface {
+  background: #ef6c00;   /* naranja */
+  color: #fff;
+}
+.mat-mdc-snack-bar-container.snack-warn .mdc-snackbar__label,
+.mat-mdc-snack-bar-container.snack-warn .mdc-button__label {
+  color: #fff;
+}
+
+/* (Opcional) borde para diferenciarlos */
+.mat-mdc-snack-bar-container.snack-success .mdc-snackbar__surface { border-left: 4px solid #a5d6a7; }
+.mat-mdc-snack-bar-container.snack-error   .mdc-snackbar__surface { border-left: 4px solid #ef9a9a; }
+.mat-mdc-snack-bar-container.snack-info    .mdc-snackbar__surface { border-left: 4px solid #90caf9; }
+.mat-mdc-snack-bar-container.snack-warn    .mdc-snackbar__surface { border-left: 4px solid #ffcc80; }

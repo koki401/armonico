@@ -1,0 +1,179 @@
+<app-layout>
+  <div class="dashboard-content">
+    <div class="page-title">
+      <h2>Dashboard Armónico</h2>
+      <p>Resumen de la actividad del restaurante en tiempo real</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid" *ngIf="resumenHoy as r">
+      <div class="stat-card">
+        <div class="stat-header">
+          <span>Ventas del Día</span>
+          <fa-icon [icon]="faDollarIcon"></fa-icon>
+        </div>
+        <div class="stat-value">
+          {{ r.totalDia | currency:'GTQ':'symbol-narrow':'1.2-2' }}
+        </div>
+        <div class="stat-sub">
+          {{totalDiaDiffPct}} %
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span>Órdenes Completadas</span>
+          <fa-icon [icon]="faCheck"></fa-icon>
+        </div>
+        <div class="stat-value">{{ resumenHoy.completadas }}</div>
+        <div class="stat-change positive">{{ completadasMsg }}</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span>Tiempo Promedio</span>
+          <fa-icon [icon]="faClock"></fa-icon>
+        </div>
+        <div class="stat-value"> {{ r.promedioMin }} min</div>
+        <div class="stat-change">{{ promedioMinMsg }}</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span>Órdenes Activas</span>
+          <fa-icon [icon]="faCart"></fa-icon>
+        </div>
+        <div class="stat-value">{{r.activas}}</div>
+        <div class="stat-subtitle">En proceso</div>
+      </div>
+    </div>
+
+    <!-- Recent Orders & Kitchen Performance -->
+    <div class="content-grid">
+      <!-- Recent Orders -->
+      <div class="orders-section">
+        <div class="section-header">
+          <h3>Órdenes Recientes</h3>
+          <span class="active-count">4 activas</span>
+        </div>
+
+        <div class="orders-list">
+          <div class="order-card">
+            <div class="order-header">
+              <span class="order-number">#001</span>
+              <div class="order-info">
+                <h4>Mesa 5</h4>
+                <p>2x Hamburguesa, 1x Papas</p>
+              </div>
+            </div>
+            <div class="order-footer">
+              <span class="order-price">$25.50</span>
+              <span class="order-status preparing">preparando</span>
+              <span class="order-time">5 min</span>
+            </div>
+          </div>
+
+          <div class="order-card">
+            <div class="order-header">
+              <span class="order-number">#002</span>
+              <div class="order-info">
+                <h4>Mesa 12</h4>
+                <p>1x Pizza Margarita</p>
+              </div>
+            </div>
+            <div class="order-footer">
+              <span class="order-price">$18.00</span>
+              <span class="order-status ready">listo</span>
+              <span class="order-time">12 min</span>
+            </div>
+          </div>
+
+          <div class="order-card">
+            <div class="order-header">
+              <span class="order-number">#003</span>
+              <div class="order-info">
+                <h4>Delivery</h4>
+                <p>3x Tacos, 2x Bebidas</p>
+              </div>
+            </div>
+            <div class="order-footer">
+              <span class="order-price">$32.75</span>
+              <span class="order-status new">nuevo</span>
+              <span class="order-time">1 min</span>
+            </div>
+          </div>
+
+          <div class="order-card highlighted">
+            <div class="order-header">
+              <span class="order-number">#004</span>
+              <div class="order-info">
+                <h4>Mesa 8</h4>
+                <p>2x Ensalada César</p>
+              </div>
+            </div>
+            <div class="order-footer">
+              <span class="order-price">$22.00</span>
+              <span class="order-status preparing">preparando</span>
+              <span class="order-time">8 min</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kitchen Performance -->
+      <div class="performance-section">
+        <h3>Rendimiento de Cocina</h3>
+
+        <div class="performance-metric" *ngIf="resumenHoy as r">
+          <div class="metric-header">
+            <span>Eficiencia Diaria</span>
+            <span class="metric-value">{{r.porcentajeCompVsAct}}%</span>
+          </div>
+          <div class="progress-bar" *ngIf="resumenHoy as r">
+            <div class="progress-fill" style="width: {{r.porcentajeCompVsAct}}%"></div>
+          </div>
+        </div>
+
+        <div class="performance-metric" *ngIf="resumenHoy as r">
+          <div class="metric-header">
+            <span>Tiempo Promedio</span>
+            <span class="metric-value">{{ r.promedioMin }} min</span>
+          </div>
+          <div class="progress-bar" *ngIf="resumenHoy as r">
+            <div class="progress-fill" style="width: {{r.promedioMin}}%"></div>
+          </div>
+        </div>
+
+        <div class="performance-metric" *ngIf="resumenHoy as r">
+          <div class="metric-header">
+            <span>Órdenes Completadas</span>
+            <span class="metric-value">{{r.completadas}}/{{r.activas}}</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 85.45%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- System Alerts -->
+    <div class="alerts-section">
+      <div class="alerts-header">
+        <fa-icon [icon]="faCircleInfo"></fa-icon>
+        <h3>Alertas del Sistema</h3>
+      </div>
+
+      <div class="alert warning">
+        <span class="alert-icon">●</span>
+        <span class="alert-text">Stock bajo: Tomates (5 unidades restantes)</span>
+        <button class="alert-action">Inventario</button>
+      </div>
+
+      <div class="alert urgent">
+        <span class="alert-icon">●</span>
+        <span class="alert-text">Mesa 7: Orden esperando más de 15 minutos</span>
+        <button class="alert-action">Urgente</button>
+      </div>
+    </div>
+  </div>
+</app-layout>

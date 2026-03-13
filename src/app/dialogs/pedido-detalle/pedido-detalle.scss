@@ -1,0 +1,97 @@
+:host {
+  display: block;
+  color: #eaeaea;
+}
+
+.dialog {
+  background: #111;
+  padding: 16px 16px 0;
+  width: min(560px, 92vw);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  h2 {
+    margin: 0;
+    font-weight: 700;
+  }
+
+  button {
+    color: #aaa;
+  }
+}
+
+.metodos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 18px 0;
+
+  .metodo {
+    background: #1b1b1b;
+    border-radius: 12px;
+    height: 88px;
+    text-transform: none;
+    color: #ddd;
+    display: grid;
+    place-items: center;
+    gap: 6px;
+
+    mat-icon {
+      font-size: 26px;
+      height: 26px;
+      width: 26px;
+    }
+
+    &.activo {
+      outline: 2px solid #ce3a3a;
+      background: #232323;
+      color: #fff;
+    }
+  }
+}
+
+.notas {
+  margin-top: 8px;
+
+  .titulo {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .w-100 {
+    width: 100%;
+  }
+
+  ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+
+  ::ng-deep .mdc-text-field--filled {
+    background: #1b1b1b !important;
+    color: #eaeaea;
+    border-radius: 12px;
+  }
+
+  ::ng-deep textarea {
+    color: #eaeaea !important;
+  }
+}
+
+.footer {
+  padding: 14px 0 6px;
+  display: flex;
+  justify-content: center;
+
+  .btn-confirmar {
+    width: 100%;
+    height: 52px;
+    border-radius: 12px;
+    font-weight: 700;
+    text-transform: none;
+  }
+}

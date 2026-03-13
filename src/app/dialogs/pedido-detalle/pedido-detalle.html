@@ -1,0 +1,28 @@
+<div class="dialog">
+    <div class="header">
+        <h2>Procesar Pago Orden#{{ idPedido }} </h2>
+        <button mat-icon-button aria-label="Cerrar" (click)="cerrar()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <div class="metodos">
+        <button mat-raised-button class="metodo" [class.activo]="isActivo('EFECTIVO')"
+            (click)="seleccionar('EFECTIVO')">
+            <mat-icon>payments</mat-icon><span>Efectivo</span>
+        </button>
+    </div>
+
+    <div class="notas">
+        <label class="titulo">Notas especiales</label>
+        <mat-form-field appearance="fill" class="w-100">
+            <textarea matInput rows="3" placeholder="Instrucciones adicionales..." [formControl]="notaCtrl"></textarea>
+        </mat-form-field>
+    </div>
+
+    <div class="footer">
+        <button mat-raised-button color="warn" class="btn-confirmar" (click)="confirmar()">
+            {{ botonTexto() }}
+        </button>
+    </div>
+</div>

@@ -1,0 +1,195 @@
+<h2 mat-dialog-title>Agregar Platillo</h2>
+
+<mat-dialog-content class="dialog-content">
+    <form [formGroup]="form" class="form-grid">
+        <!-- Nombre -->
+        <mat-form-field appearance="fill" class="full">
+            <mat-label>Nombre</mat-label>
+            <input matInput formControlName="nombre" placeholder="Hamburguesa Clásica" />
+            @if (form.get('nombre')?.touched && form.get('nombre')?.invalid) {
+            <mat-error>Nombre es requerido (máx. 120)</mat-error>
+            }
+        </mat-form-field>
+
+        <!-- Categoría -->
+        <mat-form-field appearance="fill" class="full">
+            <mat-label>Categoría</mat-label>
+            <mat-select formControlName="idCategoria">
+                <mat-option *ngFor="let c of categorias" [value]="c.idCategoria">
+                    {{ c.nombre }}
+                </mat-option>
+            </mat-select>
+            @if (form.get('idCategoria')?.touched && form.get('idCategoria')?.invalid) {
+            <mat-error>Selecciona una categoría</mat-error>
+            }
+        </mat-form-field>
+
+
+        <!-- Descripción -->
+        <mat-form-field appearance="fill" class="span-2">
+            <mat-label>Descripción</mat-label>
+            <textarea matInput rows="3" formControlName="descripcion"
+                placeholder="Hamburguesa de carne con lechuga, tomate y queso"></textarea>
+            @if (form.get('descripcion')?.touched && form.get('descripcion')?.hasError('maxlength')) {
+            <mat-error>Máx. 300 caracteres</mat-error>
+            }
+        </mat-form-field>
+
+        <!-- Precio de venta -->
+        <mat-form-field appearance="fill" class="full">
+            <mat-label>Precio de venta</mat-label>
+            <input matInput type="number" step="0.01" formControlName="precioVenta" placeholder="95.00" />
+            @if (form.get('precioVenta')?.touched && form.get('precioVenta')?.invalid) {
+            <mat-error>Ingresa un precio válido (mayor a 0)</mat-error>
+            }
+        </mat-form-field>
+
+        <!-- Tiempo mínimo -->
+        <mat-form-field appearance="fill" class="full">
+            <mat-label>Tiempo estimado (min)</mat-label>
+            <input matInput type="number" step="1" formControlName="tiempoMin" placeholder="15" />
+            @if (form.get('tiempoMin')?.touched && form.get('tiempoMin')?.invalid) {
+            <mat-error>Ingresa minutos válidos (1 o más)</mat-error>
+            }
+        </mat-form-field>
+
+        <!-- URL de imagen + preview -->
+        <mat-form-field appearance="fill" class="span-2">
+            <mat-label>URL de imagen</mat-label>
+            <input matInput formControlName="imagen" placeholder="https://imag.bonviveur.com/hamburguesa-clasica.jpg" />
+            @if (form.get('imagen')?.touched && form.get('imagen')?.hasError('url')) {
+            <mat-error>Ingresa una URL válida</mat-error>
+            }
+        </mat-form-field>
+
+        <div class="preview" *ngIf="form.get('imagen')?.valid && form.get('imagen')?.value">
+            <img [src]="form.get('imagen')?.value" alt="Vista previa" />
+        </div>
+
+        <!-- Selección de ingrediente -->
+        <mat-form-field appearance="fill" class="span-2">
+            <mat-label>Ingrediente</mat-label>
+            <mat-select formControlName="idIngrediente">
+                <mat-option *ngFor="let p of productos; trackBy: trackByProdId" [value]="p.id">
+                    {{ p.nombre }}
+                </mat-option>
+            </mat-select>
+            @if (form.get('idIngrediente')?.touched && form.get('idIngrediente')?.invalid) {
+            <mat-error>Selecciona un ingrediente</mat-error>
+            }
+        </mat-form-field>
+
+        <!-- Cantidad Mostrada -->
+        <mat-form-field appearance="fill" class="full">
+            <mat-label>Cantidad Mostrada</mat-label>
+            <input matInput type="number" min="0.01" step="0.01" formControlName="cantidadMostrada" />
+        </mat-form-field>
+
+        <!-- Unidad Mostrada -->
+        <mat-form-field appearance="fill" class="full">
+            <mat-label>Unidad Mostrada</mat-label>
+            <mat-select formControlName="unidadMostrada">
+                <mat-optgroup *ngFor="let group of unidadCategories" [label]="group.label">
+                    <mat-option *ngFor="let u of group.items" [value]="u">{{ u }}</mat-option>
+                </mat-optgroup>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full">
+            <mat-label>Cantidad Consumida</mat-label>
+            <input matInput type="number" min="0.01" step="0.01" formControlName="cantidadConsumida" />
+            <mat-hint>Cantidad que se descuenta del inventario</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full">
+            <mat-label>Unidad Base</mat-label>
+            <input matInput formControlName="unidadBase" readonly />
+            <mat-hint>Unidad del producto en inventario</mat-hint>
+        </mat-form-field>
+
+        <!-- Botón Agregar -->
+        <div class="full">
+            <button mat-raised-button color="primary" (click)="agregarIngrediente()"
+                [disabled]="!puedeAgregarIngrediente()">
+                Agregar ingrediente
+            </button>
+        </div>
+
+        <!-- Listado de ingredientes agregados -->
+        <div class="span-2">
+            <h4 class="list-title">
+                Ingredientes agregados <span class="badge">{{ ingredientes.length }}</span>
+            </h4>
+
+            <table class="mat-elevation-z1 ing-table" *ngIf="ingredientes.length; else noIng">
+                <thead>
+                    <tr>
+                        <th>Ingrediente</th>
+                        <th class="num">Cant. Mostrada</th>
+                        <th>Unidad Mostrada</th>
+                        <th class="num">Cant. Consumida</th> 
+                        <th>Unidad Base</th> 
+                        <th class="actions-col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let ing of ingredientes; trackBy: trackByIngId">
+                        <td>{{ ing.nombreProducto }}</td>
+                        <td class="num">{{ ing.cantidadMostrada }}</td>
+                        <td>{{ ing.unidadMostrada }}</td>
+                        <td class="num">{{ ing.cantidadConsumida }}</td> 
+                        <td>{{ ing.unidadBase }}</td>
+                        <td class="actions-col">
+                            <button mat-button color="warn"
+                                (click)="eliminarIngrediente(ing.idProducto)">Quitar</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <ng-template #noIng>
+                <div class="hint">No hay ingredientes en el listado.</div>
+            </ng-template>
+        </div>
+
+        <!-- === Alérgenos === -->
+        <mat-form-field appearance="fill" class="full">
+            <mat-label>Alérgeno</mat-label>
+            <mat-select formControlName="idAlergeno">
+                <mat-option *ngFor="let a of alergenos; trackBy: trackByAlergenoId" [value]="a.id">
+                    {{ a.nombre }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <div class="full">
+            <button mat-raised-button color="primary" (click)="agregarAlergeno()" [disabled]="!puedeAgregarAlergeno()">
+                Agregar alérgeno
+            </button>
+        </div>
+
+        <!-- Listado de alérgenos agregados (chips) -->
+        <div class="span-2" *ngIf="alergenosSeleccionados.length; else sinAlergenos">
+            <h4 class="list-title">Alérgenos agregados</h4>
+            <div class="chips">
+                <div class="chip" *ngFor="let id of alergenosSeleccionados; trackBy: trackByIdSimple">
+                    <span class="chip-text">{{ nombreAlergeno(id) }}</span>
+                    <button mat-button color="warn" class="chip-del" (click)="quitarAlergeno(id)">Quitar</button>
+                </div>
+            </div>
+        </div>
+
+        <ng-template #sinAlergenos>
+            <div class="hint">No hay alérgenos en el listado.</div>
+        </ng-template>
+
+
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="actions">
+    <button mat-button class="btn-cancel" mat-dialog-close>Cancelar</button>
+    <button mat-raised-button color="primary" class="btn-save" (click)="guardar()" [disabled]="form.invalid">
+        Guardar
+    </button>
+</mat-dialog-actions>

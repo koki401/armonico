@@ -1,0 +1,200 @@
+<app-layout>
+  <!-- inventario.component.html -->
+  <div class="inventario-container">
+    <!-- Header -->
+    <div class="inventario-header">
+      <div class="header-content">
+        <h1>Inventario Armónico</h1>
+        <p>Control de stock, movimientos y alertas de inventario</p>
+      </div>
+      @if (vistaActiva === 'movimientos') {
+      <button class="icon-btn notification" matTooltip="Crear categoría" matTooltipPosition="below"
+        matTooltipShowDelay="300" aria-label="Crear categoría" (click)="openCrearCategoria()">
+        <fa-icon [icon]="faLayer"></fa-icon>
+      </button>
+      <button class="icon-btn settings" matTooltip="Crear proveedor" matTooltipPosition="below"
+        matTooltipShowDelay="300" aria-label="Crear proveedor" (click)="openCrearProveedor()">
+        <fa-icon [icon]="faBoxesPacking"></fa-icon>
+      </button>
+      } @else if (vistaActiva === 'inventario') {
+      <button class="btn-registrar" (click)="registrarProducto()">
+        <span class="plus-icon">+</span>
+        Registrar Producto
+      </button>
+      }
+
+    </div>
+
+    <!-- Tarjetas de Resumen -->
+    <div class="resumen-grid">
+      <!-- Stock Crítico -->
+      <div class="resumen-card critico">
+        <div class="card-header">
+          <span>Stock Crítico</span>
+          <fa-icon [icon]="faWarning" class="icon-warning"></fa-icon>
+        </div>
+        <div class="card-value">{{ stockCritico }}</div>
+        <div class="card-subtitle">Productos por debajo del mínimo</div>
+      </div>
+
+      <!-- Próximos a Vencer -->
+      <div class="resumen-card vencimiento">
+        <div class="card-header">
+          <span>Próximos a Vencer</span>
+          <fa-icon [icon]="faCalendar" class="icon-calendar"></fa-icon>
+        </div>
+        <div class="card-value">{{ reposicionesRecientes }}</div>
+        <div class="card-subtitle">Productos que vencen en 3 días o menos</div>
+      </div>
+
+      <!-- Valor Total -->
+      <div class="resumen-card valor">
+        <div class="card-header">
+          <span>Valor Total</span>
+          <fa-icon [icon]="faChart" class="icon-chart"></fa-icon>
+        </div>
+        <div class="card-value">Q {{ valorTotal.toFixed(2) }}</div>
+        <div class="card-subtitle">Valor total del inventario</div>
+      </div>
+    </div>
+
+    <!-- Pestañas -->
+    <div class="tabs-container">
+      <button class="tab" [class.active]="vistaActiva === 'inventario'" (click)="cambiarVista('inventario')">
+        Inventario
+      </button>
+      <button class="tab" [class.active]="vistaActiva === 'movimientos'" (click)="cambiarVista('movimientos')">
+        Movimientos
+      </button>
+    </div>
+
+    <!-- Vista de MOVIMIENTOS (Historial) -->
+    <div *ngIf="vistaActiva === 'movimientos'" class="movimientos-view">
+      <div class="movimientos-header">
+        <h2>Historial de Movimientos</h2>
+        <button class="btn-exportar" (click)="exportarReporte()">
+          <fa-icon [icon]="faExport"></fa-icon>
+          Exportar Reporte
+        </button>
+      </div>
+
+      <div class="movimientos-lista">
+        <div *ngFor="let mov of movimientos" class="movimiento-card">
+          <div class="movimiento-icon" [style.background-color]="mov.color"></div>
+
+          <div class="movimiento-info">
+            <h3>{{ mov.productoNombre }}</h3>
+            <p>{{ mov.motivo }}</p>
+          </div>
+
+          <div class="movimiento-detalles">
+            <span class="badge" [class.salida]="mov.tipo === 'salida'" [class.entrada]="mov.tipo === 'entrada'">
+              {{ mov.tipo }}
+            </span>
+            <span class="cantidad">{{ mov.tipo === 'salida' ? '-' : '+' }}{{ mov.cantidad }}</span>
+            <div class="fecha-usuario">
+              <span class="fecha">{{ mov.fecha | date: 'short' }}</span>
+              <span class="usuario"> - {{ mov.usuario }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vista de INVENTARIO (Listado de productos) -->
+    <div *ngIf="vistaActiva === 'inventario'" class="inventario-view">
+      <!-- Filtros por categoría -->
+      <div class="categorias-filtro">
+        <button *ngFor="let cat of categorias" class="categoria-btn"
+          [class.active]="categoriaActiva === cat.idCategoria" (click)="cambiarCategoria(cat.idCategoria)">
+          {{ cat.nombre }}
+        </button>
+      </div>
+
+      <!-- Lista de productos -->
+      <div class="productos-lista">
+        <div *ngFor="let producto of productosFiltrados" class="producto-card">
+
+          <!-- Header del producto -->
+          <div class="producto-header">
+            <div class="producto-titulo">
+              <h3>{{ producto.nombre }}</h3>
+              <div class="badges">
+                <span *ngIf="producto.estadoStock" class="badge" [ngClass]="getEstadoClass(producto.estadoStock)">
+                  {{ producto.estadoStock }}
+                </span>
+
+                @let dias = getDiasHastaVencimiento(producto.fechavencimiento);
+
+                @if (dias !== null) {
+                <span class="badge" [ngClass]="getClaseVencimiento(dias)">
+                  {{ getEtiquetaVencimiento(dias) }}
+                </span>
+                }
+              </div>
+            </div>
+
+            <div class="producto-acciones">
+              <button class="btn-icon" (click)="editarProducto(producto)" title="Editar">
+                <fa-icon [icon]="faPenToSquare"></fa-icon>
+              </button>
+              <button class="btn-icon" (click)="registrarMovimientoProducto(producto)" title="Registrar movimiento">
+                <fa-icon [icon]="faCubes"></fa-icon>
+              </button>
+            </div>
+          </div>
+
+          <!-- Información del producto -->
+          <div class="producto-info-grid">
+            <div class="info-item">
+              <span class="label">Stock actual:</span>
+              <span class="value">{{ producto.stockActual }} {{ producto.unidad }}</span>
+            </div>
+
+            <div class="info-item">
+              <span class="label">Stock mínimo:</span>
+              <span class="value">{{ producto.stockMinimo }} {{ producto.unidad }}</span>
+            </div>
+
+            <div class="info-item">
+              <span class="label">Costo unitario:</span>
+              <span class="value">Q.{{ producto.precioVenta.toFixed(2) }}</span>
+            </div>
+
+            <div class="info-item">
+              <span class="label">Valor total:</span>
+              <span class="value">Q.{{ producto.valorTotal.toFixed(2) }}</span>
+            </div>
+          </div>
+
+          <!-- Barra de nivel de stock -->
+          <div class="nivel-stock-container">
+            <div class="nivel-stock-header">
+              <span class="label">Nivel de stock</span>
+              <span class="porcentaje">{{ producto.nivelStock }}%</span>
+            </div>
+            <div class="barra-progreso">
+              <div class="progreso-fill" [class]="getEstadoClass(producto.estadoStock)"
+                [style.width.%]="producto.nivelStock">
+              </div>
+            </div>
+          </div>
+
+          <!-- Información adicional -->
+          <div class="producto-footer">
+            <span class="label">Proveedor: {{ producto.nombreProveedor }}</span>
+            &nbsp;&nbsp;
+            <span class="label">Ubicación: {{ producto.ubicacion }}</span>
+            &nbsp;&nbsp;
+            <span class="label">Última reposición: {{ producto.ultimaReposicion | date: 'dd/MM/yyyy' }}</span>
+          </div>
+        </div>
+
+        <!-- Mensaje si no hay productos -->
+        <div *ngIf="productosFiltrados.length === 0" class="no-productos">
+          <p>No hay productos en esta categoría</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-layout>

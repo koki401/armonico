@@ -1,0 +1,183 @@
+<app-layout>
+    <div class="pos-container">
+        <!-- Panel Izquierdo - Productos -->
+        <div class="products-panel">
+            <h1 class="title">Punto de Venta - Armónico</h1>
+
+            <!-- Buscador -->
+            <div class="search-wrapper">
+                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <input type="text" placeholder="Buscar productos..." [(ngModel)]="searchTerm" class="search-input" />
+            </div>
+
+            <!-- Categorías -->
+            <div class="categories">
+                <button *ngFor="let category of categories" [class.active]="selectedCategory === category"
+                    (click)="selectCategory(category)" class="category-btn">
+                    {{ category }}
+                </button>
+            </div>
+
+            <!-- Loader -->
+            <div *ngIf="loading" class="loader-container">
+                <div class="loader"></div>
+                <p>Cargando productos...</p>
+            </div>
+
+            <!-- Error -->
+            <div *ngIf="error" class="error-message">
+                <p>{{ error }}</p>
+                <button (click)="loadProducts()" class="retry-btn">Reintentar</button>
+            </div>
+
+            <!-- Grid de Productos -->
+            <div *ngIf="!loading && !error" class="products-grid">
+                <div *ngFor="let product of filteredProducts; trackBy: trackByProductId" class="product-card">
+                    <div class="product-image-wrapper">
+                        <img [src]="product.imagen" [alt]="product.nombre" class="product-image"
+                            (error)="$any($event.target).src='https://via.placeholder.com/400x300?text=Sin+Imagen'" />
+                        <span *ngIf="!product.activo" class="out-of-stock-badge">
+                            Agotado
+                        </span>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">{{ product.nombre }}</h3>
+                        <p class="product-description">{{ product.descripcion }}</p>
+                        <div class="product-meta">
+                            <span *ngIf="product.numIngredientes" class="meta-item">
+                                {{ product.numIngredientes }} ingredientes
+                            </span>
+                            <span *ngIf="product.alergenos.length" class="meta-item alergenos">
+                                {{ product.alergenos.length }} alérgenos
+                            </span>
+                        </div>
+                        <p class="product-price">Q{{ product.precioVenta.toFixed(2) }}</p>
+                        <button (click)="addToOrder(product)" [disabled]="!product.activo"
+                            [class.disabled]="!product.activo" class="add-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M5 12h14"></path>
+                                <path d="M12 5v14"></path>
+                            </svg>
+                            Agregar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- No hay productos -->
+                <div *ngIf="filteredProducts.length === 0" class="no-products">
+                    <p>No se encontraron productos</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel Derecho - Orden Actual -->
+        <!-- Panel Derecho - Orden Actual -->
+        <div class="order-panel" [class.collapsed]="orderPanelCollapsed">
+            <button class="toggle-panel-btn" (click)="toggleOrderPanel()">
+                <svg *ngIf="!orderPanelCollapsed" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="m9 18 6-6-6-6" />
+                </svg>
+                <svg *ngIf="orderPanelCollapsed" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="m15 18-6-6 6-6" />
+                </svg>
+            </button>
+
+            <div class="order-content">
+                <div class="order-header">
+                    <h2 class="order-title">Orden Actual</h2>
+                    <span *ngIf="orderItems.length > 0" class="items-count">{{ orderItems.length }}</span>
+                </div>
+
+                <!-- Tipo de Servicio -->
+                <div class="form-group">
+                    <label class="form-label">Tipo de Servicio</label>
+
+                    <select [(ngModel)]="serviceType" class="form-select">
+                        <option [ngValue]="null" disabled selected>Seleccione…</option>
+                        <option *ngFor="let t of tipos; trackBy: trackTipoPedido" [ngValue]="t.idTipo">
+                            {{ t.nombre }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group" *ngIf="isMesaSelected()">
+                    <label class="form-label">Número de Mesa</label>
+                    <select [(ngModel)]="tableNumber" class="form-select">
+                        <option [ngValue]="null" disabled>Seleccione…</option>
+                        <option *ngFor="let m of mesas" [ngValue]="m.idMesa">
+                            {{ m.nombre }}
+                        </option>
+                    </select>
+                </div>
+                <!-- Lista de productos en la orden -->
+                <div class="order-items-wrapper">
+                    <div *ngIf="orderItems.length === 0" class="empty-order">
+                        <p>No hay productos en la orden</p>
+                    </div>
+
+                    <div *ngIf="orderItems.length > 0" class="order-items">
+                        <div *ngFor="let item of orderItems; trackBy: trackByOrderItemId" class="order-item">
+                            <div class="order-item-header">
+                                <h4 class="order-item-name">{{ item.nombre }}</h4>
+                                <button (click)="removeFromOrder(item.id)" class="remove-btn">
+                                    ×
+                                </button>
+                            </div>
+                            <div class="order-item-footer">
+                                <div class="quantity-controls">
+                                    <button (click)="decreaseQuantity(item.id)" class="qty-btn">
+                                        -
+                                    </button>
+                                    <span class="quantity">{{ item.quantity }}</span>
+                                    <button (click)="increaseQuantity(item.id)" class="qty-btn">
+                                        +
+                                    </button>
+                                </div>
+                                <span class="item-total">
+                                    Q{{ (item.precioVenta * item.quantity).toFixed(2) }}
+                                </span>
+                            </div>
+
+                        </div>
+                    </div>
+                    <label class="form-check">
+                        <input type="checkbox" [(ngModel)]="habilitarNota" name="habilitarNota" />
+                        Escribir una nota
+                    </label>
+                    <div class="form-group" *ngIf="habilitarNota"> 
+                        <label for="nota" class="form-label">Nota</label>
+                        <textarea id="nota" name="nota" class="note-input" rows="6" maxlength="500"
+                            placeholder="Escriba la nota aquí…"
+                            oninput="document.getElementById('count').textContent=this.value.length"></textarea>
+                        <div class="hint"><span id="count">0</span>/500 caracteres</div>
+                    </div>
+                    <div *ngIf="orderItems.length > 0" class="order-footer">
+                        <div class="total-section">
+                            <span class="total-label">Total:</span>
+                            <span class="total-amount">Q{{ totalAmount.toFixed(2) }}</span>
+                        </div>
+                        <button (click)="processOrder()" class="process-btn">
+                            Procesar Orden
+                        </button>
+                        <button (click)="cancelOrder()" class="cancel-btn">
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+    </div>
+</app-layout>

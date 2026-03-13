@@ -1,0 +1,116 @@
+<app-layout>
+    <header class="kds__header">
+        <div class="kds__header-left">
+            <h1>Cocina Armónica - Sistema KDS</h1>
+            <p>Sistema de gestión de órdenes para cocina en tiempo real</p>
+        </div>
+
+        <div class="kds__counters">
+            <div class="counter counter--blue">
+                <span class="counter__num">{{ totalNuevas() }}</span>
+                <span class="counter__label">Nuevas</span>
+            </div>
+
+            <div class="counter counter--yellow">
+                <span class="counter__num">{{ totalEnProceso() }}</span>
+                <span class="counter__label">En Proceso</span>
+            </div>
+
+            <div class="counter counter--green">
+                <span class="counter__num">{{ totalListas() }}</span>
+                <span class="counter__label">Listas</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="kds__columns">
+        <!-- Columna 1 -->
+        <section class="col">
+            <h2 class="col__title">
+                <span class="dot dot--blue"></span>
+                Órdenes Nuevas ({{ totalNuevas() }})
+            </h2>
+
+            <article class="card" *ngFor="let p of (nuevas() || []); trackBy: trackByPedido">
+                <div class="card__head">
+                    <div class="card__title">#{{ pad(p.idPedido) }} - {{ etiquetaMesa(p) }}</div>
+                    <span [ngClass]="pillClass(p.estadoActual)">{{ pillText(p.estadoActual) }}</span>
+                </div>
+                <div class="card__time">
+                    ⏱ {{ transcurridoMinutos(p) }} min · Est: {{ estimadoMinutos(p) }} min
+                </div>
+
+                <ul class="items">
+                    <li *ngFor="let d of p.detalles">{{ d.cantidad }}x {{ d.nombrePlatillo }}</li>
+                </ul>
+
+                <div class="card__actions">
+                    <button mat-raised-button color="warn" (click)="doAction(p)">
+                        <mat-icon class="material-symbols-rounded btn-icon">play_arrow</mat-icon>
+                        Comenzar Preparación
+                    </button>
+                </div>
+            </article>
+        </section>
+
+        <!-- Columna 2 -->
+        <section class="col">
+            <h2 class="col__title">
+                <span class="dot dot--yellow"></span>
+                En Preparación ({{ totalEnProceso() }})
+            </h2>
+
+            <article class="card card--spaced" *ngFor="let p of (enPrep() || []); trackBy: trackByPedido">
+                <div class="card__head">
+                    <div class="card__title">#{{ pad(p.idPedido) }} - {{ etiquetaMesa(p) }}</div>
+                    <span [ngClass]="pillClass(p.estadoActual)">{{ pillText(p.estadoActual) }}</span>
+                </div>
+
+                <div class="card__time" [class.late]="estaAtrasada(p)">
+                    ⏱ {{ transcurridoMinutos(p) }} min · Est: {{ estimadoMinutos(p) }} min
+                </div>
+
+                <ul class="items">
+                    <li *ngFor="let d of p.detalles">{{ d.cantidad }}x {{ d.nombrePlatillo }}</li>
+                </ul>
+
+                <div class="card__actions">
+                    <button mat-raised-button color="primary" (click)="doAction(p)">
+                        <mat-icon class="material-symbols-rounded btn-icon">task_alt</mat-icon>
+                        Marcar como Lista
+                    </button>
+                </div>
+            </article>
+
+        </section>
+
+        <!-- Columna 3 -->
+        <section class="col">
+            <h2 class="col__title">
+                <span class="dot dot--green"></span>
+                Listas para Servir ({{ totalListas() }})
+            </h2>
+            <article class="card" *ngFor="let p of (listas() || []); trackBy: trackByPedido">
+                <div class="card__head">
+                    <div class="card__title">#{{ pad(p.idPedido) }} - {{ etiquetaMesa(p) }}</div>
+                    <span [ngClass]="pillClass(p.estadoActual)">{{ pillText(p.estadoActual) }}</span>
+                </div>
+
+                <div class="card__time">
+                    ⏱ {{ transcurridoMinutos(p) }} min · Completado
+                </div>
+
+                <ul class="items">
+                   <li *ngFor="let d of p.detalles">{{ d.cantidad }}x {{ d.nombrePlatillo }}</li>
+                </ul>
+
+                <div class="card__actions">
+                    <button mat-raised-button (click)="doAction(p)">
+                        {{ actionFor(p).text }}
+                    </button>
+                </div>
+            </article>
+        </section>
+    </main>
+
+</app-layout>

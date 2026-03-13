@@ -1,0 +1,82 @@
+/* Fondo oscuro del diálogo */
+::ng-deep .mat-mdc-dialog-surface {
+    background-color: #111 !important;
+    color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+}
+
+/* Título */
+h2[mat-dialog-title] {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+/* Contenido */
+.dialog-content {
+    display: block;
+    min-width: 320px;
+}
+
+/* Grid de 2 columnas */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* Campos */
+.full {
+    width: 100%;
+}
+
+.span-2 {
+    grid-column: 1 / -1;
+    width: 100%;
+}
+
+/* Ajuste responsivo: 1 columna en móvil */
+@media (max-width: 640px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .span-2 {
+        grid-column: auto;
+    }
+}
+
+/* Acciones */
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+/* Botones */
+.btn-cancel {
+    background-color: #2a2a2a !important;
+    color: #fff !important;
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 6px 18px;
+
+    &:hover {
+        background-color: #3a3a3a !important;
+    }
+}
+
+.btn-save {
+    background-color: #791a1a !important;
+    color: #fff !important;
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 6px 18px;
+
+    &:hover {
+        background-color: #791a1a !important;
+    }
+}   

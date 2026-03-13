@@ -1,0 +1,411 @@
+@use "sass:color";
+
+/* =======================
+   Paleta (SCSS variables)
+   ======================= */
+$bg: #0f1115;
+$panel: #161a22;
+$ink: #e6e6e6;
+$muted: #96a0b2;
+
+$blue: #3ba7ff;
+$yellow: #e2b93b;
+$green: #39c16c;
+$red: #ef4444;
+$red-strong: #dc2626;
+
+$btn-warn: #ef4444;
+$btn-warn-hover: #dc2626;
+
+$btn-primary: #16a34a;
+$btn-primary-hover: #15803d;
+
+$btn-neutral: #111827;
+$btn-neutral-hover: #0b1220;
+
+/* =======================
+   Utilidades
+   ======================= */
+@mixin badge($bgc, $fgc) {
+    background: $bgc;
+    color: $fgc;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    text-transform: uppercase;
+}
+
+@mixin dot($c) {
+    &::before {
+        content: "•";
+        color: $c;
+        margin-right: .35rem;
+    }
+}
+
+/* =======================
+   Layout
+   ======================= */
+:host {
+    display: block;
+    color: $ink;
+}
+
+.kds__columns {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+
+    /* Borde rojo a las tarjetas de la columna “En Preparación” */
+    >.col:nth-child(2) article.card {
+        border: 2px solid $red-strong;
+        box-shadow: 0 0 0 3px color.change($red-strong, $alpha: .15),
+            0 10px 18px rgba(0, 0, 0, .35);
+    }
+}
+
+/* =======================
+   Columnas / títulos
+   ======================= */
+.col__title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: $ink;
+    font-weight: 600;
+    margin: 0 1rem 12px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    display: inline-block;
+}
+
+.dot--blue {
+    background: $blue;
+}
+
+.dot--yellow {
+    background: $yellow;
+}
+
+.dot--green {
+    background: $green;
+}
+
+/* =======================
+   Card base
+   ======================= */
+.card {
+    background: $panel;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, .06);
+    padding: 18px;
+    color: $ink;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, .3);
+
+    &--spaced {
+        margin-top: 8px;
+    }
+
+    &__head {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    &__title {
+        font-weight: 700;
+    }
+
+    &__time {
+        color: $muted;
+        margin-bottom: 12px;
+
+        &.late {
+            color: $red;
+            font-weight: 600;
+        }
+    }
+
+    .items {
+        margin: 0 0 14px;
+        padding-left: 18px;
+    }
+}
+
+/* =======================
+   Pills de estado
+   ======================= */
+.pill {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: lowercase;
+}
+
+.pill--nuevo {
+    background: color.change($blue, $alpha: .15);
+    color: $blue;
+}
+
+.pill--preparando {
+    background: color.change($yellow, $alpha: .15);
+    color: $yellow;
+}
+
+.pill--listo {
+    background: color.change($green, $alpha: .15);
+    color: $green;
+}
+
+/* =======================
+   Botones (Angular Material)
+   ======================= */
+/* “Comenzar Preparación” (warn, rojo) */
+.card__actions .mat-mdc-raised-button.mat-warn {
+    background: $btn-warn;
+    color: #fff;
+
+    &:hover {
+        background: $btn-warn-hover;
+    }
+}
+
+/* “Marcar como Lista” (primary, verde) */
+.card__actions .mat-mdc-raised-button.mat-primary {
+    background: $btn-primary;
+    color: #fff;
+
+    &:hover {
+        background: $btn-primary-hover;
+    }
+}
+
+/* “Confirmar Entrega” (neutral) – cualquier raised que no sea primary/warn */
+.card__actions .mat-mdc-raised-button:not(.mat-primary):not(.mat-warn) {
+    background: $btn-neutral;
+    color: #fff;
+
+    &:hover {
+        background: $btn-neutral-hover;
+    }
+}
+
+/* === Más separación entre tarjetas en cada columna === */
+.kds__columns .col article.card+article.card {
+    margin-top: 28px;
+    /* antes 16px */
+}
+
+/* Si prefieres usar gap en la columna (muy limpio): */
+.kds__columns .col {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    /* controla toda la separación vertical */
+}
+
+.kds__columns .col article.card {
+    margin-top: 0 !important;
+}
+
+/* neutraliza reglas previas */
+
+/* === Más aire dentro de la tarjeta === */
+.card__head {
+    margin-bottom: 12px;
+}
+
+/* antes 8px */
+.card__time {
+    margin: 10px 0 16px;
+}
+
+/* antes 12px total */
+.card .items {
+    margin: 8px 0 16px;
+}
+
+/* separa lista del botón */
+.card .items li {
+    padding: 10px 12px;
+}
+
+/* renglones más altos */
+.card__actions {
+    margin-top: 14px;
+}
+
+/* botón más abajo */
+
+/* (Opcional) un poco más de separación horizontal entre columnas */
+.kds__columns {
+    gap: 28px;
+}
+
+/* antes 24px */
+
+
+
+.btn-icon {
+    margin-right: 10px;
+    font-size: 20px;
+    /* tamaño visible del símbolo */
+    line-height: 1;
+    vertical-align: middle;
+}
+
+/* asegura el set “rounded” se vea bien */
+.mat-icon[fontset="material-symbols-rounded"] {
+    font-family: "Material Symbols Rounded" !important;
+    font-variation-settings: "FILL" 0, "wght" 600, "GRAD" 0, "opsz" 24;
+    color: #e6e6e6
+}
+
+
+$pill-bg: #0f1115;
+$blue: #3ba7ff;
+$yellow: #e2b93b;
+$green: #39c16c;
+$red: #ff6b6b;
+$ink-dark: #0b1220;
+
+.pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: lowercase;
+    line-height: 1;
+    user-select: none;
+    border: 2px solid transparent;
+    background: color.change($pill-bg, $alpha: .4);
+
+    &--new {
+        color: $blue;
+        border-color: color.change($blue, $alpha: .35);
+        background: color.change(#102a43, $alpha: .35); // azul oscuro translúcido (como tu captura)
+    }
+
+    // “preparando” se ve más sólido/lleno
+    &--prep {
+        color: color.adjust($yellow, $lightness: 5%);
+        border-color: color.change($yellow, $alpha: .45);
+        background: color.change(#2a2205, $alpha: .85); // fondo oscuro cálido
+    }
+
+    &--done {
+        color: $green;
+        border-color: color.change($green, $alpha: .45);
+        background: color.change(#032012, $alpha: .6);
+    }
+
+    &--ent {
+        color: color.adjust($green, $lightness: 8%);
+        border-color: color.change($green, $alpha: .35);
+        background: color.change(#052416, $alpha: .45);
+    }
+
+    &--cancel {
+        color: color.adjust($red, $lightness: 5%);
+        border-color: color.change($red, $alpha: .35);
+        background: color.change(#2b1216, $alpha: .5);
+    }
+}
+
+/* Header principal */
+.kds__header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 18px 16px 8px;
+    margin-bottom: 12px;
+}
+
+.kds__header-left h1 {
+    margin: 0;
+    font-weight: 800;
+    font-size: 34px;
+    /* se ve similar a la captura */
+    line-height: 1.1;
+}
+
+.kds__header-left p {
+    margin: 4px 0 0;
+    color: $muted;
+    /* ya definido en tu paleta */
+    font-size: 16px;
+}
+
+/* Contadores */
+.kds__counters {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    /* separación entre contadores */
+}
+
+.counter {
+    display: grid;
+    justify-items: center;
+    row-gap: 4px;
+    min-width: 64px;
+}
+
+.counter__num {
+    font-weight: 800;
+    font-size: 28px;
+    line-height: 1;
+}
+
+.counter__label {
+    font-size: 14px;
+    color: $muted;
+}
+
+/* Colores por estado (usa tu paleta SCSS) */
+.counter--blue .counter__num {
+    color: $blue;
+}
+
+.counter--yellow .counter__num {
+    color: $yellow;
+}
+
+.counter--green .counter__num {
+    color: $green;
+}
+
+/* Opcional: añade un puntito decorativo a la izquierda del label */
+.counter--blue .counter__label::before,
+.counter--yellow .counter__label::before,
+.counter--green .counter__label::before {
+    content: "•";
+    margin-right: 6px;
+}
+
+.counter--blue .counter__label::before {
+    color: $blue;
+}
+
+.counter--yellow .counter__label::before {
+    color: $yellow;
+}
+
+.counter--green .counter__label::before {
+    color: $green;
+}
+
+/* Un poco más de aire arriba de las columnas para que no choque con el header */
+.kds__columns {
+    margin-top: 8px;
+}

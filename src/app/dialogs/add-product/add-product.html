@@ -1,0 +1,100 @@
+<h2 mat-dialog-title>Agregar Producto</h2>
+
+<mat-dialog-content class="dialog-content">
+    <form [formGroup]="form" class="form-grid">
+        <!-- Columna 1 -->
+        <mat-form-field appearance="fill" class="full">
+            <mat-label>Nombre</mat-label>
+            <input matInput formControlName="nombre" />
+            @if (form.get('nombre')?.touched && form.get('nombre')?.invalid) {
+            <mat-error>Nombre es requerido (máx. 120)</mat-error>
+            }
+        </mat-form-field>
+
+        <!-- Columna 2 -->
+        <mat-form-field appearance="fill" class="full">
+            <mat-label>Categoría</mat-label>
+            <mat-select formControlName="idCategoria">
+                <mat-option *ngFor="let c of categorias" [value]="c.idCategoria">
+                    {{ c.nombre }}
+                </mat-option>
+            </mat-select>
+            @if (form.get('idCategoria')?.touched && form.get('idCategoria')?.invalid) {
+            <mat-error>Selecciona una categoría</mat-error>
+            }
+        </mat-form-field>
+
+        <!-- Descripción (ocupa 2) -->
+        <mat-form-field appearance="fill" class="span-2">
+            <mat-label>Descripción</mat-label>
+            <textarea matInput rows="3" formControlName="descripcion"></textarea>
+        </mat-form-field>
+
+        <!-- Unidad -->
+        <mat-form-field appearance="fill" class="full">
+            <mat-label>Unidad</mat-label>
+            <input matInput formControlName="unidad" placeholder="Ej.: Botella, Caja, Unidad" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full">
+            <mat-label>Proveedores</mat-label>
+            <mat-select formControlName="idProveedor">
+                <mat-option *ngFor="let p of proveedores" [value]="p.idProveedor">{{ p.nombre }}</mat-option>
+            </mat-select>
+            @if(form.get('proveedoresIds')?.touched && form.get('proveedoresIds')?.invalid) {
+            <mat-error>Selecciona al menos un proveedor</mat-error>
+            }
+        </mat-form-field>
+
+
+        <!-- Precio de compra / venta -->
+        <mat-form-field appearance="fill" class="full">
+            <mat-label>Precio de compra</mat-label>
+            <input matInput type="number" step="0.01" formControlName="precioCompra" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full">
+            <mat-label>Precio de venta</mat-label>
+            <input matInput type="number" step="0.01" formControlName="precioVenta" />
+            @if (form.hasError('precioVentaMenorQueCompra') || form.get('precioVenta')?.hasError('menorQueCompra')) {
+            <mat-error>El precio de venta no puede ser menor que el de compra</mat-error>
+            }
+        </mat-form-field>
+
+        <mat-slider class="span-2" [min]="10" [max]="200" [step]="1" discrete showTickMarks
+            [disabled]="form.get('margenPct')?.disabled">
+            <input matSliderThumb formControlName="margenPct" />
+        </mat-slider>
+
+        <mat-form-field appearance="fill" class="full">
+            <mat-label>Stock Actual</mat-label>
+            <input matInput type="number" formControlName="stockActual" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full">
+            <mat-label>Stock Minimo</mat-label>
+            <input matInput type="number" formControlName="stockMinimo" />
+        </mat-form-field>
+
+
+        <!-- Ubicación -->
+        <mat-form-field appearance="fill" class="full">
+            <mat-label>Ubicación</mat-label>
+            <input matInput formControlName="ubicacion" />
+        </mat-form-field>
+
+        <!-- Fecha vencimiento -->
+        <mat-form-field appearance="fill" class="full">
+            <mat-label>Fecha de vencimiento</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="fechavencimiento"
+                placeholder="Selecciona una fecha" />
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="actions">
+    <button mat-button class="btn-cancel" mat-dialog-close>Cancelar</button>
+    <button mat-raised-button class="btn-save" (click)="guardar()">Guardar</button>
+</mat-dialog-actions>

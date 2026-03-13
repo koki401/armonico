@@ -1,0 +1,42 @@
+<h2 mat-dialog-title>Registrar Movimiento de Inventario</h2>
+
+<mat-dialog-content class="dialog-content">
+    <form [formGroup]="form" class="form-grid">
+        <!-- Columna 1 -->
+        <mat-form-field appearance="fill" class="full">
+            <mat-label>Producto</mat-label>
+            <mat-select formControlName="idProducto">
+                <mat-option *ngFor="let p of productos" [value]="p.idProducto">
+                    {{ p.nombre }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <!-- Columna 2 -->
+        <mat-form-field appearance="fill" class="full">
+            <mat-label>Tipo de Movimiento</mat-label>
+            <mat-select formControlName="idTipo">
+                <mat-option [value]="1">Entrada</mat-option>
+                <mat-option [value]="2">Salida</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <!-- Columna 1 -->
+        <mat-form-field appearance="fill" class="span-2">
+            <mat-label>Cantidad</mat-label>
+            <input matInput type="number" formControlName="cantidad" />
+        </mat-form-field>
+
+
+        <!-- Ocupa ambas columnas -->
+        <mat-form-field appearance="fill" class="span-2">
+            <mat-label>Observaciones</mat-label>
+            <textarea matInput rows="3" formControlName="observacion"></textarea>
+        </mat-form-field>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="actions">
+    <button mat-button mat-dialog-close>Cancelar</button>
+    <button mat-raised-button color="primary" (click)="guardar()">Guardar</button>
+</mat-dialog-actions>

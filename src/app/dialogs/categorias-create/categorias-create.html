@@ -1,0 +1,29 @@
+<h2 mat-dialog-title>Crear Categoría</h2>
+
+<mat-dialog-content class="dialog-content">
+  <form [formGroup]="form" class="form-grid">
+    <mat-form-field appearance="fill" class="full">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="nombre" />
+      @if (form.get('nombre')?.touched && form.get('nombre')?.invalid) {
+        <mat-error>Nombre requerido (máx. 120)</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="span-2">
+      <mat-label>Descripción</mat-label>
+      <textarea matInput rows="4" formControlName="descripcion"></textarea>
+    </mat-form-field>
+
+    <mat-checkbox formControlName="activo">Activo</mat-checkbox>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="actions">
+  <button mat-button class="btn-cancel" mat-dialog-close [disabled]="loading">Cancelar</button>
+  <button mat-raised-button color="primary" class="btn-save"
+          (click)="guardar()"
+          [disabled]="form.invalid || loading">
+    Guardar
+  </button>
+</mat-dialog-actions>

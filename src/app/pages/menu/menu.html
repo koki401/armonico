@@ -1,0 +1,167 @@
+<app-layout>
+    <div class="inventario-container">
+        <!-- Header -->
+        <div class="inventario-header">
+            <div class="header-content">
+                <h1>Menú Armónico</h1>
+                <p>Administra platillos, categorías y recetas del restaurante</p>
+            </div>
+            @if (vistaActiva === 'categoriacombo') {
+            <button class="btn-registrar" (click)="registrarCategoria()">
+                <span class="plus-icon">+</span>
+                Registrar Categoría
+            </button>
+            } @else if (vistaActiva === 'producto') {
+            <button class="btn-registrar" (click)="registrarProducto()">
+                <span class="plus-icon">+</span>
+                Registrar Platillo
+            </button>
+            }
+
+        </div>
+        <!-- Pestañas -->
+        <div class="tabs-container">
+            <button class="tab" [class.active]="vistaActiva === 'producto'" (click)="cambiarVista('producto')">
+                Platillos
+            </button>
+            <button class="tab" [class.active]="vistaActiva === 'categoriacombo'"
+                (click)="cambiarVista('categoriacombo')">
+                Categorías
+            </button>
+        </div>
+
+        <!-- Vista de categoriacombo (Historial) -->
+        <div *ngIf="vistaActiva === 'categoriacombo'" class="categoriacombo-view">
+            <div class="categoriacombo-view">
+                <!-- Lista de categorías -->
+                <div class="categoria-combo-lista">
+                    <div class="categoria-card" *ngFor="let cat of categoriacombo">
+                        <!-- Contenido principal -->
+                        <div class="categoria-content">
+                            <!-- Izquierda: Info -->
+                            <div class="left">
+                                <div class="titulo-wrapper">
+                                    <h2 class="titulo">{{ cat.nombre }}</h2>
+                                    <span class="pill" [class.inactiva]="!cat.activo">
+                                        {{ cat.activo ? 'Activa' : 'Inactiva' }}
+                                    </span>
+                                </div>
+                                <p class="desc">{{ cat.descripcion || 'Sin descripción' }}</p>
+                                <a class="count" (click)="verProductos(cat)">
+                                    {{ (cat.totalProductos ?? 0) === 1 ? '1 producto' : ((cat.totalProductos ?? 0) + '
+                                    productos') }}
+                                </a>
+                            </div>
+
+                            <!-- Derecha: Acciones -->
+                            <div class="right">
+                                <div class="toggle-group">
+                                    <span class="label-estado">{{ cat.activo ? 'Activa' : 'Inactiva' }}</span>
+                                    <mat-slide-toggle color="warn" [checked]="cat.activo"
+                                        (change)="toggleActivo(cat, $event)">
+                                    </mat-slide-toggle>
+                                </div>
+                                <button mat-icon-button class="btn-editar" (click)="editarCategoria(cat)"
+                                    aria-label="Editar categoría">
+                                    <mat-icon>edit_square</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estado vacío -->
+                    <div class="empty-state" *ngIf="categoriacombo?.length === 0">
+                        <mat-icon>category</mat-icon>
+                        <p>No hay categorías disponibles</p>
+                        <button mat-raised-button color="warn" (click)="nuevaCategoria()">
+                            <mat-icon>add</mat-icon>
+                            Nueva Categoría
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Vista de INVENTARIO (Listado de productos) -->
+        <div *ngIf="vistaActiva === 'producto'" class="inventario-view">
+            <!-- Lista de platillos -->
+            <div *ngFor="let platillo of platillos" class="productos-lista">
+                <div class="producto-card">
+                    <div class="producto-header">
+                        <img class="producto-img" [src]="platillo.imagen || 'assets/img/placeholder.jpg'" alt="" />
+
+                        <div class="producto-titulo">
+                            <div class="titulo-row">
+                                <h3>{{ platillo.nombre }}</h3>
+                                <div class="badges">
+                                    <span class="badge" [ngClass]="platillo.activo ? 'disponible' : 'inactivo'">
+                                        {{ platillo.activo ? 'Disponible' : 'No disponible' }}
+                                    </span>
+                                    <span class="badge badge-categoria">{{ platillo.categoriaNombre || 'Platos
+                                        principales' }}</span>
+                                </div>
+                            </div>
+
+                            <p class="producto-desc">{{ platillo.descripcion }}</p>
+
+                            <div class="producto-meta">
+                                <strong><span class="meta-item">Q{{ platillo.precioVenta | number:'1.2-2'
+                                        }}</span></strong>
+                                <span class="meta-item">
+                                    <fa-icon [icon]="faBoxOpen" aria-hidden="true"></fa-icon>
+                                    {{ platillo.ingredientes.length || 0 }} ingredientes</span>
+                                <span class="meta-item">
+                                    <fa-icon [icon]="faClock" aria-hidden="true"></fa-icon>
+                                    {{ platillo.tiempoMin }} min preparación</span>
+                            </div>
+
+                            <div class="alergenos" *ngIf="platillo.alergenos?.length">
+                                <span class="lbl">Alérgenos:</span>
+                                <span class="chip" *ngFor="let a of platillo.alergenos">{{ a }}</span>
+                            </div>
+                        </div>
+
+                        <div class="producto-acciones">
+                            <div class="toggle-group">
+                                <span class="label-estado">{{ platillo.activo ? 'Disponible' : 'No disponible'}}</span>
+                                <mat-slide-toggle color="warn" [checked]="platillo.activo"
+                                    (change)="toggleActivoPlatillo(platillo, $event)">
+                                </mat-slide-toggle>
+                            </div>
+                            <button class="btn-icon" (click)="editarProducto(platillo)" title="Editar">
+                                <fa-icon [icon]="faPenToSquare"></fa-icon>
+                            </button>
+                        </div>
+
+                        <hr />
+
+                        <section class="receta">
+                            <h4>Receta (Ingredientes):</h4>
+
+                            <div class="ing-grid">
+                                <div class="ing-card" *ngFor="let ing of platillo.ingredientes">
+                                    <div class="ing-nombre">{{ ing.nombreProducto }}</div>
+                                    <div class="ing-detalle">
+                                        <ng-container
+                                            *ngIf="ing.cantidadMostrada !== null && ing.cantidadMostrada !== undefined">
+                                            {{ ing.cantidadMostrada }} {{ formatUnidad(ing.unidadMostrada,
+                                            ing.cantidadMostrada) }}
+                                        </ng-container>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+
+
+                <!-- Mensaje si no hay productos -->
+                <div *ngIf="platillos.length === 0" class="no-productos">
+                    <p>No hay productos en esta categoría</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</app-layout>
